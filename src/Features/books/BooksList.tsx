@@ -1,6 +1,7 @@
 // src/features/books/BooksList.tsx
 import React, { useState } from "react";
 import { useGetBooksQuery, useDeleteBookMutation } from "./booksApi";
+import { Link } from "react-router-dom";
 
 const BooksList = () => {
   const [page, setPage] = useState(1);
@@ -8,6 +9,7 @@ const BooksList = () => {
     page,
     limit: 10,
   });
+
   const [deleteBook, { isLoading: isDeleting }] = useDeleteBookMutation();
 
   const handleDelete = async (id: string) => {
@@ -19,13 +21,16 @@ const BooksList = () => {
   if (isLoading) return <div>Loading books...</div>;
   if (error) return <div>Error loading books</div>;
 
+  // Optional: Log response structure
+  console.log("Books data:", data);
+
   return (
     <div className="mx-auto p-4 max-w-6xl">
       <h2 className="mb-4 font-bold text-2xl">Books List</h2>
 
       <table className="border border-gray-300 min-w-full">
         <thead>
-          <tr className="bg-gray-200">
+          <tr className="bg-gray-200 text-center">
             <th className="px-4 py-2 border">Title</th>
             <th className="px-4 py-2 border">Author</th>
             <th className="px-4 py-2 border">Genre</th>
@@ -36,7 +41,7 @@ const BooksList = () => {
           </tr>
         </thead>
         <tbody>
-          {data?.data.map((book) => (
+          {data?.data?.map((book) => (
             <tr key={book._id} className="hover:bg-gray-100 text-center">
               <td className="px-4 py-2 border">{book.title}</td>
               <td className="px-4 py-2 border">{book.author}</td>
@@ -54,14 +59,21 @@ const BooksList = () => {
                 >
                   Delete
                 </button>
-                {/* Add Edit and Borrow buttons later */}
+
+                {/* ✅ Borrow button */}
+                <Link
+                  to={`/borrow/${book._id}`}
+                  className="bg-green-600 px-2 py-1 rounded text-white"
+                >
+                  Borrow
+                </Link>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
 
-      {/* Pagination Controls */}
+      {/* ✅ Pagination Controls */}
       <div className="flex justify-between items-center mt-4">
         <button
           className="bg-gray-300 disabled:opacity-50 px-3 py-1 rounded"
@@ -70,11 +82,13 @@ const BooksList = () => {
         >
           Previous
         </button>
+
         <span>Page: {page}</span>
+
         <button
           className="bg-gray-300 disabled:opacity-50 px-3 py-1 rounded"
           onClick={() => setPage((prev) => prev + 1)}
-          disabled={data && page >= data.pagination.totalPages}
+          disabled={page >= (data?.pagination?.totalPages || 1)}
         >
           Next
         </button>

@@ -13,8 +13,9 @@ Built for clean design, simplicity, and smooth state handling.
 
 ## 🌐 Live Demo
 
-- 🔍 **Frontend:** [https://library-management-projects.vercel.app/](https://library-management-projects.vercel.app/)
-- 🚀 **Backend:** [https://vercel.com/tahsina-s-projects/library-management-system](https://vercel.com/tahsina-s-projects/library-management-system)
+- 🔍 **Frontend:** [https://library-management-projects.vercel.app](https://library-management-projects.vercel.app)
+- 🚀 **Backend:** [https://library-management-system-delta-nine.vercel.app](https://library-management-system-delta-nine.vercel.app)
+- 🔗 API Base URL: https://library-management-system-delta-nine.vercel.app/api
 ---
 ### 🔗 Project Repositories
 
@@ -95,16 +96,21 @@ Great for tracking borrowed books at a glance!
 
 ---
 
-## 🧭 Routes Overview
+## 🔗 Backend API Endpoints
 
-| Route              | Description                          |
-|--------------------|--------------------------------------|
-| `/books`           | View all books with action buttons   |
-| `/create-book`     | Add a new book                       |
-| `/books/:id`       | View book details                    |
-| `/edit-book/:id`   | Edit an existing book                |
-| `/borrow/:bookId`  | Borrow a selected book               |
-| `/borrow-summary`  | View all borrowed books              |
+All API endpoints use the base URL:  
+`https://library-management-system-delta-nine.vercel.app/api`
+
+| Method | Endpoint              | Description                 |
+|--------|-----------------------|-----------------------------|
+| GET    | `/books`              | Get all books               |
+| POST   | `/books`              | Add a new book              |
+| GET    | `/books/:id`          | Get details of a book       |
+| PATCH  | `/books/:id`          | Update a book               |
+| DELETE | `/books/:id`          | Delete a book               |
+| POST   | `/borrow/:id`         | Borrow a book               |
+| GET    | `/borrow-summary`     | Get summary of borrowed books |
+
 
 ---
 

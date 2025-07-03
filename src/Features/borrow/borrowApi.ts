@@ -1,4 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { booksApi } from "../books/booksApi";
 
 interface BorrowInput {
   quantity: number;
@@ -31,6 +32,24 @@ export const borrowApi = createApi({
         { type: "Books", id: "LIST" },
         { type: "Books", id: bookId },
       ],
+      async onQueryStarted({ bookId, data }, { dispatch, queryFulfilled }) {
+        try {
+          await queryFulfilled;
+          dispatch(
+            booksApi.util.updateQueryData(
+              "getBooks",
+              { page: 1, limit: 10 },
+              (draft) => {
+                const book = draft.data.find((b) => b._id === bookId);
+                if (book) {
+                  book.copies -= data.quantity;
+                  book.available = book.copies > 0;
+                }
+              }
+            )
+          );
+        } catch {}
+      },
     }),
 
     getBorrowSummary: builder.query<BorrowSummary[], void>({

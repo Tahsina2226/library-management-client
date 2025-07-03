@@ -1,5 +1,6 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useBorrowBookMutation } from "./borrowApi";
+import { useGetBookQuery } from "../books/booksApi";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
@@ -7,6 +8,7 @@ const BorrowForm = () => {
   const { bookId } = useParams();
   const navigate = useNavigate();
   const [borrowBook] = useBorrowBookMutation();
+  const { refetch } = useGetBookQuery(bookId!, { skip: !bookId });
   const [quantity, setQuantity] = useState(1);
   const [dueDate, setDueDate] = useState("");
 
@@ -21,7 +23,8 @@ const BorrowForm = () => {
 
     try {
       await borrowBook({ bookId, data: { quantity, dueDate } }).unwrap();
-      toast.success(" Book borrowed successfully!", {
+      await refetch();
+      toast.success("Book borrowed successfully!", {
         id: toastId,
         position: "top-center",
         style: { fontSize: "16px" },
@@ -29,7 +32,7 @@ const BorrowForm = () => {
       navigate("/borrow-summary");
     } catch (error) {
       console.error(error);
-      toast.error(" Failed to borrow book", {
+      toast.error("Failed to borrow book", {
         id: toastId,
         position: "top-center",
         style: { fontSize: "16px" },

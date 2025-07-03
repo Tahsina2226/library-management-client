@@ -1,41 +1,16 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useGetBookQuery, useUpdateBookMutation } from "./booksApi";
 import toast from "react-hot-toast";
-
-type Book = {
-  id: string;
-  title: string;
-  author: string;
-  genre: string;
-  isbn: string;
-  description?: string;
-  copies: number;
-  available?: boolean;
-};
-
-type BookFormState = {
-  title: string;
-  author: string;
-  genre: string;
-  isbn: string;
-  description: string;
-  copies: number;
-};
 
 const EditBookForm = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
-  const { data, error, isLoading } = useGetBookQuery(id!) as {
-    data?: Book;
-    error?: unknown;
-    isLoading: boolean;
-  };
-
+  const { data, error, isLoading } = useGetBookQuery(id!);
   const [updateBook, { isLoading: isUpdating }] = useUpdateBookMutation();
 
-  const [formState, setFormState] = useState<BookFormState>({
+  const [formState, setFormState] = useState({
     title: "",
     author: "",
     genre: "",
@@ -51,16 +26,14 @@ const EditBookForm = () => {
         author: data.author,
         genre: data.genre,
         isbn: data.isbn,
-        description: data.description ?? "",
+        description: data.description || "",
         copies: data.copies,
       });
     }
   }, [data]);
 
   const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-    >
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
     setFormState((prev) => ({
@@ -86,15 +59,15 @@ const EditBookForm = () => {
     });
 
     try {
-      await updateBook({ id: id!, ...formState }).unwrap();
-      toast.success("✅ Book updated successfully!", {
+      await updateBook({ id: id!, data: formState }).unwrap();
+      toast.success("Book updated successfully!", {
         id: toastId,
         position: "top-center",
         style: { fontSize: "16px" },
       });
       navigate("/books");
-    } catch (err) {
-      toast.error("❌ Failed to update book.", {
+    } catch {
+      toast.error("Failed to update book.", {
         id: toastId,
         position: "top-center",
         style: { fontSize: "16px" },
@@ -104,7 +77,6 @@ const EditBookForm = () => {
 
   if (isLoading)
     return <div className="mt-6 text-center">Loading book data...</div>;
-
   if (error)
     return (
       <div className="mt-6 text-red-600 text-center">
@@ -117,86 +89,56 @@ const EditBookForm = () => {
       <h2 className="mb-6 font-bold text-green-700 text-2xl text-center">
         ✏️ Edit Book
       </h2>
-
       <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label className="block mb-1 font-medium text-green-700">Title</label>
-          <input
-            name="title"
-            value={formState.title}
-            onChange={handleChange}
-            required
-            className="bg-white p-2 border border-green-200 rounded focus:ring-2 focus:ring-green-300 w-full"
-          />
-        </div>
-
-        <div>
-          <label className="block mb-1 font-medium text-green-700">
-            Author
-          </label>
-          <input
-            name="author"
-            value={formState.author}
-            onChange={handleChange}
-            required
-            className="bg-white p-2 border border-green-200 rounded focus:ring-2 focus:ring-green-300 w-full"
-          />
-        </div>
-
-        <div>
-          <label className="block mb-1 font-medium text-green-700">Genre</label>
-          <select
-            name="genre"
-            value={formState.genre}
-            onChange={handleChange}
-            required
-            className="bg-white p-2 border border-green-200 rounded focus:ring-2 focus:ring-green-300 w-full"
-          >
-            <option value="">Select Genre</option>
-            <option value="FICTION">Fiction</option>
-            <option value="NONFICTION">Non-Fiction</option>
-            <option value="SCIENCE">Science</option>
-          </select>
-        </div>
-
-        <div>
-          <label className="block mb-1 font-medium text-green-700">ISBN</label>
-          <input
-            name="isbn"
-            value={formState.isbn}
-            onChange={handleChange}
-            required
-            className="bg-white p-2 border border-green-200 rounded focus:ring-2 focus:ring-green-300 w-full"
-          />
-        </div>
-
-        <div>
-          <label className="block mb-1 font-medium text-green-700">
-            Description
-          </label>
-          <textarea
-            name="description"
-            value={formState.description}
-            onChange={handleChange}
-            className="bg-white p-2 border border-green-200 rounded focus:ring-2 focus:ring-green-300 w-full"
-          />
-        </div>
-
-        <div>
-          <label className="block mb-1 font-medium text-green-700">
-            Copies
-          </label>
-          <input
-            type="number"
-            name="copies"
-            min={0}
-            value={formState.copies}
-            onChange={handleChange}
-            required
-            className="bg-white p-2 border border-green-200 rounded focus:ring-2 focus:ring-green-300 w-full"
-          />
-        </div>
-
+        <InputField
+          label="Title"
+          name="title"
+          placeholder="Enter book title"
+          value={formState.title}
+          onChange={handleChange}
+          required
+        />
+        <InputField
+          label="Author"
+          name="author"
+          placeholder="Enter author name"
+          value={formState.author}
+          onChange={handleChange}
+          required
+        />
+        <InputField
+          label="Genre"
+          name="genre"
+          placeholder="Enter genre (e.g. Fiction, Science)"
+          value={formState.genre}
+          onChange={handleChange}
+          required
+        />
+        <InputField
+          label="ISBN"
+          name="isbn"
+          placeholder="Enter ISBN number"
+          value={formState.isbn}
+          onChange={handleChange}
+          required
+        />
+        <TextAreaField
+          label="Description"
+          name="description"
+          placeholder="Enter book description"
+          value={formState.description}
+          onChange={handleChange}
+        />
+        <InputField
+          label="Copies"
+          type="number"
+          name="copies"
+          min={0}
+          placeholder="Enter number of copies"
+          value={formState.copies}
+          onChange={handleChange}
+          required
+        />
         <button
           type="submit"
           disabled={isUpdating}
@@ -208,5 +150,68 @@ const EditBookForm = () => {
     </div>
   );
 };
+
+type InputFieldProps = {
+  label: string;
+  name: string;
+  value: string | number;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  required?: boolean;
+  type?: string;
+  min?: number;
+  placeholder?: string;
+};
+
+const InputField = ({
+  label,
+  name,
+  value,
+  onChange,
+  required = false,
+  type = "text",
+  min,
+  placeholder,
+}: InputFieldProps) => (
+  <div>
+    <label className="block mb-1 font-medium text-green-700">{label}</label>
+    <input
+      name={name}
+      type={type}
+      min={min}
+      placeholder={placeholder}
+      value={value}
+      onChange={onChange}
+      required={required}
+      className="bg-white p-2 border border-green-200 rounded focus:ring-2 focus:ring-green-300 w-full"
+    />
+  </div>
+);
+
+type TextAreaFieldProps = {
+  label: string;
+  name: string;
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
+  placeholder?: string;
+};
+
+const TextAreaField = ({
+  label,
+  name,
+  value,
+  onChange,
+  placeholder,
+}: TextAreaFieldProps) => (
+  <div>
+    <label className="block mb-1 font-medium text-green-700">{label}</label>
+    <textarea
+      name={name}
+      placeholder={placeholder}
+      value={value}
+      onChange={onChange}
+      className="bg-white p-2 border border-green-200 rounded focus:ring-2 focus:ring-green-300 w-full"
+    />
+  </div>
+);
 
 export default EditBookForm;

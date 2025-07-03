@@ -18,6 +18,7 @@ export const borrowApi = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: "https://library-management-system-delta-nine.vercel.app/api",
   }),
+  tagTypes: ["Borrow"],
   endpoints: (builder) => ({
     borrowBook: builder.mutation<any, { bookId: string; data: BorrowInput }>({
       query: ({ bookId, data }) => ({
@@ -25,6 +26,7 @@ export const borrowApi = createApi({
         method: "POST",
         body: data,
       }),
+      invalidatesTags: ["Borrow"],
     }),
 
     getBorrowSummary: builder.query<BorrowSummary[], void>({
@@ -34,6 +36,7 @@ export const borrowApi = createApi({
         message: string;
         data: BorrowSummary[];
       }) => response.data,
+      providesTags: ["Borrow"],
     }),
   }),
 });

@@ -60,14 +60,14 @@ const EditBookForm = () => {
 
     try {
       await updateBook({ id: id!, data: formState }).unwrap();
-      toast.success("Book updated successfully!", {
+      toast.success("✅ Book updated successfully!", {
         id: toastId,
         position: "top-center",
         style: { fontSize: "16px" },
       });
       navigate("/books");
-    } catch {
-      toast.error("Failed to update book.", {
+    } catch (err) {
+      toast.error("❌ Failed to update book.", {
         id: toastId,
         position: "top-center",
         style: { fontSize: "16px" },
@@ -90,55 +90,79 @@ const EditBookForm = () => {
         ✏️ Edit Book
       </h2>
       <form onSubmit={handleSubmit} className="space-y-4">
-        <InputField
-          label="Title"
-          name="title"
-          placeholder="Enter book title"
-          value={formState.title}
-          onChange={handleChange}
-          required
-        />
-        <InputField
-          label="Author"
-          name="author"
-          placeholder="Enter author name"
-          value={formState.author}
-          onChange={handleChange}
-          required
-        />
-        <InputField
-          label="Genre"
-          name="genre"
-          placeholder="Enter genre (e.g. Fiction, Science)"
-          value={formState.genre}
-          onChange={handleChange}
-          required
-        />
-        <InputField
-          label="ISBN"
-          name="isbn"
-          placeholder="Enter ISBN number"
-          value={formState.isbn}
-          onChange={handleChange}
-          required
-        />
-        <TextAreaField
-          label="Description"
-          name="description"
-          placeholder="Enter book description"
-          value={formState.description}
-          onChange={handleChange}
-        />
-        <InputField
-          label="Copies"
-          type="number"
-          name="copies"
-          min={0}
-          placeholder="Enter number of copies"
-          value={formState.copies}
-          onChange={handleChange}
-          required
-        />
+        <div>
+          <label className="block mb-1 font-medium text-green-700">Title</label>
+          <input
+            name="title"
+            value={formState.title}
+            onChange={handleChange}
+            required
+            className="bg-white p-2 border border-green-200 rounded focus:ring-2 focus:ring-green-300 w-full"
+          />
+        </div>
+
+        <div>
+          <label className="block mb-1 font-medium text-green-700">
+            Author
+          </label>
+          <input
+            name="author"
+            value={formState.author}
+            onChange={handleChange}
+            required
+            className="bg-white p-2 border border-green-200 rounded focus:ring-2 focus:ring-green-300 w-full"
+          />
+        </div>
+
+        <div>
+          <label className="block mb-1 font-medium text-green-700">Genre</label>
+          <input
+            name="genre"
+            value={formState.genre}
+            onChange={handleChange}
+            required
+            className="bg-white p-2 border border-green-200 rounded focus:ring-2 focus:ring-green-300 w-full"
+          />
+        </div>
+
+        <div>
+          <label className="block mb-1 font-medium text-green-700">ISBN</label>
+          <input
+            name="isbn"
+            value={formState.isbn}
+            onChange={handleChange}
+            required
+            className="bg-white p-2 border border-green-200 rounded focus:ring-2 focus:ring-green-300 w-full"
+          />
+        </div>
+
+        <div>
+          <label className="block mb-1 font-medium text-green-700">
+            Description
+          </label>
+          <textarea
+            name="description"
+            value={formState.description}
+            onChange={handleChange}
+            className="bg-white p-2 border border-green-200 rounded focus:ring-2 focus:ring-green-300 w-full"
+          />
+        </div>
+
+        <div>
+          <label className="block mb-1 font-medium text-green-700">
+            Copies
+          </label>
+          <input
+            type="number"
+            name="copies"
+            min={0}
+            value={formState.copies}
+            onChange={handleChange}
+            required
+            className="bg-white p-2 border border-green-200 rounded focus:ring-2 focus:ring-green-300 w-full"
+          />
+        </div>
+
         <button
           type="submit"
           disabled={isUpdating}
@@ -150,68 +174,5 @@ const EditBookForm = () => {
     </div>
   );
 };
-
-type InputFieldProps = {
-  label: string;
-  name: string;
-  value: string | number;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  required?: boolean;
-  type?: string;
-  min?: number;
-  placeholder?: string;
-};
-
-const InputField = ({
-  label,
-  name,
-  value,
-  onChange,
-  required = false,
-  type = "text",
-  min,
-  placeholder,
-}: InputFieldProps) => (
-  <div>
-    <label className="block mb-1 font-medium text-green-700">{label}</label>
-    <input
-      name={name}
-      type={type}
-      min={min}
-      placeholder={placeholder}
-      value={value}
-      onChange={onChange}
-      required={required}
-      className="bg-white p-2 border border-green-200 rounded focus:ring-2 focus:ring-green-300 w-full"
-    />
-  </div>
-);
-
-type TextAreaFieldProps = {
-  label: string;
-  name: string;
-  value: string;
-  onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
-  placeholder?: string;
-};
-
-const TextAreaField = ({
-  label,
-  name,
-  value,
-  onChange,
-  placeholder,
-}: TextAreaFieldProps) => (
-  <div>
-    <label className="block mb-1 font-medium text-green-700">{label}</label>
-    <textarea
-      name={name}
-      placeholder={placeholder}
-      value={value}
-      onChange={onChange}
-      className="bg-white p-2 border border-green-200 rounded focus:ring-2 focus:ring-green-300 w-full"
-    />
-  </div>
-);
 
 export default EditBookForm;

@@ -13,7 +13,7 @@ Built for clean design, simplicity, and smooth state handling.
 
 ## 🌐 Live Demo
 
-- 🔍 **Frontend:** [https://librarymanagement-gilt.vercel.app](https://librarymanagement-gilt.vercel.app)
+- 🔍 **Frontend:** [https://library-management-projects.vercel.app/](https://library-management-projects.vercel.app/)
 - 🚀 **Backend:** [https://library-management-api.onrender.com](https://library-management-api.onrender.com)
 ---
 ### 🔗 Project Repositories

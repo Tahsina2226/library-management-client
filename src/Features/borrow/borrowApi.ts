@@ -15,7 +15,9 @@ interface BorrowSummary {
 
 export const borrowApi = createApi({
   reducerPath: "borrowApi",
-  baseQuery: fetchBaseQuery({ baseUrl: "http://localhost:5000/api" }),
+  baseQuery: fetchBaseQuery({
+    baseUrl: "https://library-management-system-delta-nine.vercel.app/api",
+  }),
   endpoints: (builder) => ({
     borrowBook: builder.mutation<any, { bookId: string; data: BorrowInput }>({
       query: ({ bookId, data }) => ({

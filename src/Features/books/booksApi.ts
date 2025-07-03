@@ -13,7 +13,9 @@ export interface Book {
 
 export const booksApi = createApi({
   reducerPath: "booksApi",
-  baseQuery: fetchBaseQuery({ baseUrl: "http://localhost:5000/api" }),
+  baseQuery: fetchBaseQuery({
+    baseUrl: "https://library-management-system-delta-nine.vercel.app/api",
+  }),
   tagTypes: ["Books"],
   endpoints: (builder) => ({
     getBooks: builder.query<
@@ -21,7 +23,16 @@ export const booksApi = createApi({
       { page?: number; limit?: number }
     >({
       query: ({ page = 1, limit = 10 }) => `/books?page=${page}&limit=${limit}`,
-      providesTags: ["Books"],
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.data.map(({ _id }) => ({
+                type: "Books" as const,
+                id: _id,
+              })),
+              { type: "Books", id: "LIST" },
+            ]
+          : [{ type: "Books", id: "LIST" }],
     }),
 
     getBook: builder.query<Book, string>({
@@ -29,11 +40,11 @@ export const booksApi = createApi({
       providesTags: (result, error, id) => [{ type: "Books", id }],
     }),
 
-    updateBook: builder.mutation<Book, Partial<Book> & { id: string }>({
-      query: ({ id, ...patch }) => ({
+    updateBook: builder.mutation<Book, { id: string; data: Partial<Book> }>({
+      query: ({ id, data }) => ({
         url: `/books/${id}`,
         method: "PUT",
-        body: patch,
+        body: data,
       }),
       invalidatesTags: (result, error, { id }) => [{ type: "Books", id }],
     }),
@@ -43,7 +54,7 @@ export const booksApi = createApi({
         url: `/books/${id}`,
         method: "DELETE",
       }),
-      invalidatesTags: ["Books"],
+      invalidatesTags: [{ type: "Books", id: "LIST" }],
     }),
 
     createBook: builder.mutation<Book, Partial<Book>>({
@@ -52,7 +63,7 @@ export const booksApi = createApi({
         method: "POST",
         body: newBook,
       }),
-      invalidatesTags: ["Books"],
+      invalidatesTags: [{ type: "Books", id: "LIST" }],
     }),
   }),
 });

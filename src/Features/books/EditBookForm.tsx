@@ -1,16 +1,41 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useGetBookQuery, useUpdateBookMutation } from "./booksApi";
 import toast from "react-hot-toast";
+
+type Book = {
+  id: string;
+  title: string;
+  author: string;
+  genre: string;
+  isbn: string;
+  description?: string;
+  copies: number;
+  available?: boolean;
+};
+
+type BookFormState = {
+  title: string;
+  author: string;
+  genre: string;
+  isbn: string;
+  description: string;
+  copies: number;
+};
 
 const EditBookForm = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
-  const { data, error, isLoading } = useGetBookQuery(id!);
+  const { data, error, isLoading } = useGetBookQuery(id!) as {
+    data?: Book;
+    error?: unknown;
+    isLoading: boolean;
+  };
+
   const [updateBook, { isLoading: isUpdating }] = useUpdateBookMutation();
 
-  const [formState, setFormState] = useState({
+  const [formState, setFormState] = useState<BookFormState>({
     title: "",
     author: "",
     genre: "",
@@ -20,15 +45,14 @@ const EditBookForm = () => {
   });
 
   useEffect(() => {
-    if (data?.data) {
-      const book = data.data;
+    if (data) {
       setFormState({
-        title: book.title,
-        author: book.author,
-        genre: book.genre,
-        isbn: book.isbn,
-        description: book.description || "",
-        copies: book.copies,
+        title: data.title,
+        author: data.author,
+        genre: data.genre,
+        isbn: data.isbn,
+        description: data.description ?? "",
+        copies: data.copies,
       });
     }
   }, [data]);
@@ -63,14 +87,14 @@ const EditBookForm = () => {
 
     try {
       await updateBook({ id: id!, ...formState }).unwrap();
-      toast.success(" Book updated successfully!", {
+      toast.success("✅ Book updated successfully!", {
         id: toastId,
         position: "top-center",
         style: { fontSize: "16px" },
       });
       navigate("/books");
     } catch (err) {
-      toast.error(" Failed to update book.", {
+      toast.error("❌ Failed to update book.", {
         id: toastId,
         position: "top-center",
         style: { fontSize: "16px" },
@@ -80,6 +104,7 @@ const EditBookForm = () => {
 
   if (isLoading)
     return <div className="mt-6 text-center">Loading book data...</div>;
+
   if (error)
     return (
       <div className="mt-6 text-red-600 text-center">
@@ -92,6 +117,7 @@ const EditBookForm = () => {
       <h2 className="mb-6 font-bold text-green-700 text-2xl text-center">
         ✏️ Edit Book
       </h2>
+
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label className="block mb-1 font-medium text-green-700">Title</label>

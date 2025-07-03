@@ -1,7 +1,7 @@
 
 
 
-# 📚 Minimal Library Management System
+# 📚Library Management System
 
 A lightweight and intuitive **Library Management Web App** built with **React**, **Redux Toolkit Query**, and **TypeScript**.
 

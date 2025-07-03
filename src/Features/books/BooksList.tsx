@@ -34,14 +34,20 @@ const BooksList: React.FC = () => {
               className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded text-white transition"
               onClick={async () => {
                 toast.dismiss(t.id);
-                const toastId = toast.loading("Deleting book...");
+                const toastId = toast.loading("Deleting book...", {
+                  className: "custom-toast-center",
+                });
                 try {
                   await deleteBook(id).unwrap();
                   toast.success("✅ Book deleted successfully!", {
                     id: toastId,
+                    className: "custom-toast-center",
                   });
                 } catch {
-                  toast.error("❌ Failed to delete the book.", { id: toastId });
+                  toast.error("❌ Failed to delete the book.", {
+                    id: toastId,
+                    className: "custom-toast-center",
+                  });
                 }
               }}
               style={{ minWidth: "90px" }}
@@ -54,7 +60,7 @@ const BooksList: React.FC = () => {
       ),
       {
         duration: Infinity,
-        position: "top-center",
+        className: "custom-toast-center",
         style: {
           display: "flex",
           justifyContent: "center",
@@ -126,21 +132,11 @@ const BooksList: React.FC = () => {
                 key={book._id}
                 className="hover:bg-gray-50 text-xs sm:text-sm md:text-base text-center"
               >
-                <td className="px-3 py-2 border border-gray-300">
-                  {book.title}
-                </td>
-                <td className="px-3 py-2 border border-gray-300">
-                  {book.author}
-                </td>
-                <td className="px-3 py-2 border border-gray-300">
-                  {book.genre}
-                </td>
-                <td className="px-3 py-2 border border-gray-300">
-                  {book.isbn}
-                </td>
-                <td className="px-3 py-2 border border-gray-300">
-                  {book.copies}
-                </td>
+                <td className="px-3 py-2 border border-gray-300">{book.title}</td>
+                <td className="px-3 py-2 border border-gray-300">{book.author}</td>
+                <td className="px-3 py-2 border border-gray-300">{book.genre}</td>
+                <td className="px-3 py-2 border border-gray-300">{book.isbn}</td>
+                <td className="px-3 py-2 border border-gray-300">{book.copies}</td>
                 <td className="px-3 py-2 border border-gray-300">
                   {book.available ? "Yes" : "No"}
                 </td>
@@ -174,12 +170,9 @@ const BooksList: React.FC = () => {
       </div>
 
       {isFetching && (
-        <p className="mt-2 font-semibold text-gray-600 text-center">
-          Refreshing...
-        </p>
+        <p className="mt-2 font-semibold text-gray-600 text-center">Refreshing...</p>
       )}
 
-      {/* Pagination controls with bottom margin */}
       <div className="flex sm:flex-row flex-col justify-between items-center gap-2 mt-6 mb-10">
         <button
           className="bg-gray-300 hover:bg-gray-400 disabled:opacity-50 px-4 py-2 rounded w-full sm:w-auto font-semibold text-gray-800 transition"
